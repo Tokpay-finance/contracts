@@ -1,0 +1,17 @@
+
+{
+    
+    "name": "NFTHUB",
+    "description": "PHOTOS",
+    "image": "https://ipfs.filebase.io/ipfs/QmPTEaHudXURDcCxieZmujGbDRHFqYmMJzUUr9shmLtwns",
+    "attributes": [
+      {
+        "trait_type": "Pictures",
+        "value": 100
+      },
+      {
+        "trait_type": "Album",
+        "color": "White"
+      }
+    ]
+  }
