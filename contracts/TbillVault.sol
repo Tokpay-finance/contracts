@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.24;
+pragma solidity ^0.8.24;
 
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
@@ -8,9 +8,11 @@ import "./TBILLToken.sol";
 import "./SafeMath.sol";
 
 contract TbillVault is ReentrancyGuard {
+    
     using SafeMath for uint256;
     TBILLToken tToken;
-    
+    ERC20 cUSDToken; // Update to ERC20 type
+    uint256 public cToken;
     uint256 public liquidityToken;
     uint256 public yieldRate = 5 * 10 ** 16; // 0.5% represented in 18 decimal places
     uint256 public constant maturityDuration = 30 days;
@@ -33,13 +35,16 @@ contract TbillVault is ReentrancyGuard {
     event YieldUpdated(uint256 newRate);
 
 
-    constructor(address _tbillToken) {
+    constructor(address _tbillToken, address _cUSDToken) {
         tToken = TBILLToken(_tbillToken);
+        cUSDToken = ERC20(_cUSDToken); // Initialize cUSD token contract
+        
     }
 
     function stake(uint256 amount) external payable nonReentrant {
         require(amount > 0, "Stake amount must be greater than zero");
-        // Transfer TBILL tokens from user to this contract
+        // Transfer cUSD tokens from user to this contract
+        require(cUSDToken.transferFrom(msg.sender, address(this), amount), "cUSD transfer failed");
         
         // Update staker's state
         Staker storage staker = stakers[msg.sender];
@@ -55,7 +60,6 @@ contract TbillVault is ReentrancyGuard {
 
     function withdraw(uint256 amount) external nonReentrant {
         require(amount > 0, "Withdrawal amount must be greater than zero");
-        require(tToken.transferFrom(msg.sender, address(this), amount), "Token not approved.");
         require(stakers[msg.sender].stakedAmount >= amount, "Insufficient staked amount");
         Staker storage staker = stakers[msg.sender];
         
@@ -67,8 +71,8 @@ contract TbillVault is ReentrancyGuard {
         
         staker.yieldEarned = withdrawAmount;
 
-        // Transfer TBILL tokens to the user
-        tToken.burn(msg.sender, amount);
+        // Transfer cUSD tokens to the user
+        require(cUSDToken.transfer(msg.sender, amount), "cUSD transfer failed");
         // Emit event
         emit Withdrawn(msg.sender, amount, 0, amount, yield);
     }
@@ -81,7 +85,7 @@ contract TbillVault is ReentrancyGuard {
     function calculateYield(uint256 initialStakedAmount, uint256 lastUpdateTimestamp) internal view returns (uint256) {
         uint256 stakedDuration = block.timestamp - lastUpdateTimestamp;
         if (stakedDuration >= maturityDuration) {
-            return initialStakedAmount * yieldRate * stakedDuration /100;
+            return initialStakedAmount * yieldRate * stakedDuration / 1 days;
         }
         return 0;
     }
