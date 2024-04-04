@@ -11,6 +11,8 @@ contract TbillVault is ReentrancyGuard {
     
     using SafeMath for uint256;
     TBILLToken tToken;
+    address public owner;
+
     ERC20 cUSDToken; // Update to ERC20 type
     uint256 public cToken;
     uint256 public liquidityToken;
@@ -59,28 +61,47 @@ contract TbillVault is ReentrancyGuard {
     }
 
     function withdraw(uint256 amount) external nonReentrant {
-        require(amount > 0, "Withdrawal amount must be greater than zero");
-        require(stakers[msg.sender].stakedAmount >= amount, "Insufficient staked amount");
-        Staker storage staker = stakers[msg.sender];
-        
-        uint256 yield = calculateYield(staker.stakedAmount,staker.lastYieldUpdate);
-        // Update state before any external calls
-        uint256 withdrawAmount = staker.stakedAmount.add(yield);
-        staker.lastYieldUpdate = block.timestamp;
-        // Calculate and transfer accrued yield
-        
-        staker.yieldEarned = withdrawAmount;
+    require(amount > 0, "Withdrawal amount must be greater than zero");
+    require(stakers[msg.sender].stakedAmount >= amount, "Insufficient staked amount");
+    Staker storage staker = stakers[msg.sender];
+    
+    uint256 yield = calculateYield(staker.stakedAmount, staker.lastYieldUpdate);
+    // Update state before any external calls
+    uint256 withdrawAmount = amount;
+    staker.stakedAmount = staker.stakedAmount.sub(amount); // Adjust staked amount
+    uint256 totalWithdrawAmount = withdrawAmount + yield;
 
-        // Transfer cUSD tokens to the user
-        require(cUSDToken.transfer(msg.sender, amount), "cUSD transfer failed");
-        // Emit event
-        emit Withdrawn(msg.sender, amount, 0, amount, yield);
-    }
+    // Update yieldEarned
+    staker.yieldEarned = staker.yieldEarned.add(yield);
+    staker.lastYieldUpdate = block.timestamp; // Update last yield update timestamp
+
+    // Transfer accrued yield along with the withdrawal amount
+    require(cUSDToken.transfer(msg.sender, totalWithdrawAmount), "cUSD transfer failed");
+
+    // Emit event
+    emit Withdrawn(msg.sender, withdrawAmount, 0, withdrawAmount, yield);
+}
 
     function getStakeAmount(address stakerAddr) internal view returns(uint _staked){
         Staker storage _staker = stakers[stakerAddr];
         _staked = _staker.stakedAmount;
     }
+
+    function transferOwner(address newOwner) external {
+    require(msg.sender == owner, "Only the owner can transfer ownership");
+    require(newOwner != address(0), "Invalid new owner address");
+    owner = newOwner;
+}
+
+function updateYield() internal nonReentrant {
+    uint256 gasLeft = gasleft(); 
+    for (uint256 i = 0; i < stakerAddresses.length; i++) {
+        calculateAndUpdateYield(stakerAddresses[i]);
+        if (gasleft() < gasLeft / 10) // Check if gas is running low
+            break;
+    }
+}
+
 
     function calculateYield(uint256 initialStakedAmount, uint256 lastUpdateTimestamp) internal view returns (uint256) {
         uint256 stakedDuration = block.timestamp - lastUpdateTimestamp;
@@ -91,17 +112,13 @@ contract TbillVault is ReentrancyGuard {
     }
 
     function calculateAndUpdateYield(address stakerAddress) internal nonReentrant {
-        Staker storage staker = stakers[stakerAddress];
-        require(staker.stakedAmount > 0, "Staker does not exist");
+    Staker storage staker = stakers[stakerAddress];
+    require(staker.stakedAmount > 0, "Staker does not exist");
 
-        uint256 yieldEarned = calculateYield(staker.stakedAmount, staker.lastYieldUpdate);
-        staker.yieldEarned = staker.yieldEarned.add(yieldEarned);
-        staker.lastYieldUpdate = block.timestamp;
-    }
+    uint256 yieldEarned = calculateYield(staker.stakedAmount, staker.lastYieldUpdate);
+    staker.yieldEarned = staker.yieldEarned.add(yieldEarned);
+    staker.lastYieldUpdate = block.timestamp;
+}
 
-    function updateYield() internal nonReentrant {
-        for (uint256 i = 0; i < stakerAddresses.length; i++) {
-            calculateAndUpdateYield(stakerAddresses[i]);
-        }
-    }
+
 }
