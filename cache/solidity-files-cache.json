@@ -74,8 +74,8 @@
       ]
     },
     "/home/nafkem/dev/StackVault/contracts/contracts/TbillVault.sol": {
-      "lastModificationDate": 1712219111936,
-      "contentHash": "db737bd5c67a9e71c61ad84a594206b2",
+      "lastModificationDate": 1712269218733,
+      "contentHash": "9316de10efe60c647567db6cf5f6e193",
       "sourceName": "contracts/TbillVault.sol",
       "solcConfig": {
         "version": "0.8.24",
