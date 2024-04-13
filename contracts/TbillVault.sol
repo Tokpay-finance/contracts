@@ -17,6 +17,7 @@ contract TbillVault is ReentrancyGuard {
     uint256 public liquidityToken;
     uint256 public yieldRate = 5 * 10 ** 16; // 0.5% represented in 18 decimal places
     uint256 public constant maturityDuration = 30 days;
+   //mapping(uint8 => uint256) public monthsToSeconds;
 
     struct Staker {
         uint256 stakedAmount;
@@ -41,6 +42,10 @@ contract TbillVault is ReentrancyGuard {
         tToken = TBILLToken(_tbillToken);
         cUSDToken = ERC20(_cUSDToken); // Initialize cUSD token contract
         owner = msg.sender; // Set the deployer as the owner
+
+       //monthsToSeconds[1] = 2626560;  // One month
+       // monthsToSeconds[3] = 7879680;  // Three months
+       // monthsToSeconds[6] = 15759360; // Six months
     }
 
 
@@ -52,15 +57,30 @@ contract TbillVault is ReentrancyGuard {
  * @param yield 
  * @param maturityValue // This is the value the staker will recieve after duration is completed
  */
-    function stake(uint256 amount,uint256 duration,uint256 yield, uint256 maturityValue) external payable nonReentrant {
+    function stake(uint256 amount,uint8 duration,uint256 yield, uint256 maturityValue) external payable nonReentrant {
         require(amount > 0, "Stake amount must be greater than zero");
+
+
+       // Validate input
+       // require(monthsToSeconds[duration] > 0, "Supported values are 1, 3, and 6 months.");
+       // Get time to add from mapping
+       // uint256 timeToAdd = monthsToSeconds[duration];
+
+       // Get current timestamp
+       // uint256 currentTime = block.timestamp;
+
+    // Calculate future timestamp
+    uint256 futureTime = currentTime.add(timeToAdd);
         // Transfer cUSD tokens from user to this contract
         require(cUSDToken.transferFrom(msg.sender, address(this), amount), "cUSD transfer failed");
         
         // Update staker's state
         Staker storage staker = stakers[msg.sender];
         staker.stakedAmount = staker.stakedAmount.add(amount);
-        staker.lastYieldUpdate = block.timestamp;
+        staker.lastYieldUpdate = block.timestamp; //change the value to yield param
+
+        //staker.stakeDuration = currentTime.add(timeToAdd);
+        //staker.maturityValue = maturityValue;
 
         userDeposits[msg.sender] += amount;
         tToken.mint(msg.sender, amount);
