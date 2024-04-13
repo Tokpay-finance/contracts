@@ -43,7 +43,16 @@ contract TbillVault is ReentrancyGuard {
         owner = msg.sender; // Set the deployer as the owner
     }
 
-    function stake(uint256 amount) external payable nonReentrant {
+
+//TODO Add the logic for the parameters
+//change the variable name lastYieldUpdate to yield because the yield cannot be updated
+/**
+ * @param amount 
+ * @param duration  // The duration will come as 30 for 1 month, 90 for 3 months 180 for 6 months
+ * @param yield 
+ * @param maturityValue // This is the value the staker will recieve after duration is completed
+ */
+    function stake(uint256 amount,uint256 duration,uint256 yield, uint256 maturityValue) external payable nonReentrant {
         require(amount > 0, "Stake amount must be greater than zero");
         // Transfer cUSD tokens from user to this contract
         require(cUSDToken.transferFrom(msg.sender, address(this), amount), "cUSD transfer failed");
