@@ -13,9 +13,9 @@
     "hardhat": "^2.22.2"
   },
   "dependencies": {
-    "@atixlabs/hardhat-time-n-mine": "^0.0.5",
     "@nomicfoundation/hardhat-network-helpers": "^1.0.10",
     "@openzeppelin/contracts": "^5.0.2",
+    "@openzeppelin/test-helpers": "^0.5.16",
     "dotenv": "^16.4.5"
   }
 }

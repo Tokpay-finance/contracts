@@ -9,29 +9,27 @@ import "./SafeMath.sol";
 contract TBillStaking is ReentrancyGuard,ERC20 {
     using SafeMath for uint256;
     struct Stake {
+        bytes32 stakeId;
         uint256 amount;
         uint256 maturityValue;
         uint256 maturityDate;
-      
         uint256 yield;
     }
 
 
     IERC20 public cUSD;
     address public owner;
-    uint256 public serviceFee; // 0.03% service fee
-    uint256 public penaltyFee; // 0.05% service fee
-    uint256 public constant SEVEN_DAYS = 7 days;
+    uint256 public serviceFee; 
+    uint256 public penaltyFee; 
+    uint256 internal immutable SEVEN_DAYS = 7 days;
 
 
-    mapping(uint8 => uint256) internal monthsToSeconds;
+  
     mapping(address => Stake[]) internal stakes;
 
     constructor( address _cUSD)ERC20("TBILL Token", "TBILL") {
-        _mint(msg.sender, 1000);
+        _mint(msg.sender, 1000000);
         cUSD = ERC20(_cUSD);
-        monthsToSeconds[7] = SEVEN_DAYS; // One month
-
         owner = msg.sender;
         serviceFee = 3;
         penaltyFee = 5;
@@ -40,12 +38,13 @@ contract TBillStaking is ReentrancyGuard,ERC20 {
     function stake(
         uint256 _amount,
         uint256 _yield,
-        uint256 _maturityValue
+        uint256 _maturityValue,
+        bytes32 _stakeId
     ) public nonReentrant {
         require(msg.sender != address(0), "Zero address not allowed");
         require(_amount > 0, "Stake amount must be greater than zero");
         uint256 currentTime = block.timestamp;
-        uint256 sevenDaysLater = currentTime + 7 days;
+        uint256 sevenDaysLater = currentTime + SEVEN_DAYS;
   
         uint256 currentAllowance = cUSD.allowance(msg.sender, address(this));
         require(currentAllowance >= _amount, "Insufficient cUSD allowance");
@@ -56,13 +55,14 @@ contract TBillStaking is ReentrancyGuard,ERC20 {
         );
         // Get time to add from mapping
 
-      
+       
+        
 
         Stake memory newStake = Stake({
+            stakeId:_stakeId,
             amount: _amount,
             maturityValue: _maturityValue,
             maturityDate: sevenDaysLater,
-           
             yield: _yield
         });
 
@@ -71,7 +71,7 @@ contract TBillStaking is ReentrancyGuard,ERC20 {
     }
 
 
-    function withdraw() public nonReentrant {
+    function withdraw(bytes32 _stakeId) public nonReentrant {
         require(msg.sender != address(0), "Zero address not allowed");
         Stake[] storage userStakes = stakes[msg.sender];
         require(userStakes.length > 0, "No stakes to withdraw");
@@ -79,10 +79,11 @@ contract TBillStaking is ReentrancyGuard,ERC20 {
         uint256 gasLimit = gasleft();
         for (uint256 i = 0; i < userStakes.length && gasLimit > 21000; i++) {
              Stake storage staked = userStakes[i];
-        
+             require(staked.stakeId==_stakeId, "Stake with ID not found to withdraw");
+ 
 
             uint256 penaltyCharge = 0;
-            if (staked.maturityDate < block.timestamp) {
+            if (staked.maturityDate > block.timestamp) {
                 penaltyCharge  = calculatefees(
                     staked.maturityValue,
                     penaltyFee
@@ -119,14 +120,34 @@ contract TBillStaking is ReentrancyGuard,ERC20 {
         _;
     }
 
+    function transferOwnership (address newOwner)external  onlyOwner{
+        owner= newOwner;
+
+    }
+
     function getStakes(address _user) public view returns (Stake[] memory) {
         return stakes[_user];
+    }
+
+    function getStakeByID(bytes32 _stakeId) public view returns (Stake memory) {
+        require(msg.sender != address(0), "Zero address not allowed");
+        Stake[] storage userStakes = stakes[msg.sender];
+        require(userStakes.length > 0, "No stakes to withdraw");
+    
+        uint256 gasLimit = gasleft();
+        for (uint256 i = 0; i < userStakes.length && gasLimit > 21000; i++) {
+            Stake storage staked = userStakes[i];
+            if (staked.stakeId == _stakeId) {
+                return staked;
+            }
+            gasLimit = gasleft();
+        }
+        revert("Stake with ID not found");
     }
 
     function setServiceFee(uint256 _fee) public onlyOwner {
         serviceFee = _fee;
     }
-
 
 
     function setPenaltyFee(uint256 _fee) public onlyOwner {
