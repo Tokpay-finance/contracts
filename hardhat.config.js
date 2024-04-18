@@ -1,19 +1,17 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("dotenv").config();
-require("@nomicfoundation/hardhat-ethers");
+require("@nomicfoundation/hardhat-ignition-ethers");
 
-/** @type import('hardhat/config').HardhatUserConfig */
-
-const { API_URL, PRIVATE_KEY } = process.env || ""
+const { API_URL, PRIVATE_KEY,CHAIN_ID } = process.env || ""
 
 module.exports = {
 
-  defaultNetwork: "hardhat",
+  defaultNetwork: "celo",
   networks: {
-    alfajores: {
+    hardhat: {},
+    celo: {
       url: API_URL,
       accounts: [PRIVATE_KEY],
-      chainId: 44787,
     },
   },
   // etherscan: {

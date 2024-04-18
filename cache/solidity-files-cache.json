@@ -1,46 +1,10 @@
 {
   "_format": "hh-sol-cache-2",
   "files": {
-    "/Users/ayoseun/Documents/GitHub/geth-lite/contracts/contracts/SafeMath.sol": {
-      "lastModificationDate": 1713182454424,
-      "contentHash": "292abce7f9e646a6f84439dde7879253",
-      "sourceName": "contracts/SafeMath.sol",
-      "solcConfig": {
-        "version": "0.8.24",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "0.8.24"
-      ],
-      "artifacts": [
-        "SafeMath"
-      ]
-    },
-    "/Users/ayoseun/Documents/GitHub/geth-lite/contracts/contracts/TbillVault.sol": {
-      "lastModificationDate": 1713373636684,
-      "contentHash": "5001361fc3287a4b39e942c7a391999f",
-      "sourceName": "contracts/TbillVault.sol",
+    "/Users/ayoseun/Documents/GitHub/geth-lite/contracts/contracts/CusdToken.sol": {
+      "lastModificationDate": 1713426723972,
+      "contentHash": "ac89fdc4924090558d44ae59cf410b58",
+      "sourceName": "contracts/CusdToken.sol",
       "solcConfig": {
         "version": "0.8.24",
         "settings": {
@@ -66,88 +30,13 @@
         }
       },
       "imports": [
-        "@openzeppelin/contracts/utils/ReentrancyGuard.sol",
-        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
-        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-        "./SafeMath.sol"
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol"
       ],
       "versionPragmas": [
-        "0.8.24"
+        "^0.8.24"
       ],
       "artifacts": [
-        "TBillStaking"
-      ]
-    },
-    "/Users/ayoseun/Documents/GitHub/geth-lite/contracts/node_modules/@openzeppelin/contracts/utils/ReentrancyGuard.sol": {
-      "lastModificationDate": 1713182648232,
-      "contentHash": "a92331adac11b453a4de0323fc948119",
-      "sourceName": "@openzeppelin/contracts/utils/ReentrancyGuard.sol",
-      "solcConfig": {
-        "version": "0.8.24",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "ReentrancyGuard"
-      ]
-    },
-    "/Users/ayoseun/Documents/GitHub/geth-lite/contracts/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol": {
-      "lastModificationDate": 1713182648120,
-      "contentHash": "5517c8678c18eb1a8ba58810e7ca39ca",
-      "sourceName": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
-      "solcConfig": {
-        "version": "0.8.24",
-        "settings": {
-          "optimizer": {
-            "enabled": true,
-            "runs": 200
-          },
-          "evmVersion": "paris",
-          "outputSelection": {
-            "*": {
-              "*": [
-                "abi",
-                "evm.bytecode",
-                "evm.deployedBytecode",
-                "evm.methodIdentifiers",
-                "metadata"
-              ],
-              "": [
-                "ast"
-              ]
-            }
-          }
-        }
-      },
-      "imports": [],
-      "versionPragmas": [
-        "^0.8.20"
-      ],
-      "artifacts": [
-        "IERC20"
+        "CUSDToken"
       ]
     },
     "/Users/ayoseun/Documents/GitHub/geth-lite/contracts/node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol": {
@@ -189,6 +78,42 @@
       ],
       "artifacts": [
         "ERC20"
+      ]
+    },
+    "/Users/ayoseun/Documents/GitHub/geth-lite/contracts/node_modules/@openzeppelin/contracts/token/ERC20/IERC20.sol": {
+      "lastModificationDate": 1713182648120,
+      "contentHash": "5517c8678c18eb1a8ba58810e7ca39ca",
+      "sourceName": "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "IERC20"
       ]
     },
     "/Users/ayoseun/Documents/GitHub/geth-lite/contracts/node_modules/@openzeppelin/contracts/utils/Context.sol": {
@@ -303,10 +228,10 @@
         "IERC721Errors"
       ]
     },
-    "/Users/ayoseun/Documents/GitHub/geth-lite/contracts/contracts/CUSDToken.sol": {
-      "lastModificationDate": 1713336269022,
-      "contentHash": "ac89fdc4924090558d44ae59cf410b58",
-      "sourceName": "contracts/CUSDToken.sol",
+    "/Users/ayoseun/Documents/GitHub/geth-lite/contracts/contracts/TbillVault.sol": {
+      "lastModificationDate": 1713426665355,
+      "contentHash": "5001361fc3287a4b39e942c7a391999f",
+      "sourceName": "contracts/TbillVault.sol",
       "solcConfig": {
         "version": "0.8.24",
         "settings": {
@@ -332,13 +257,88 @@
         }
       },
       "imports": [
-        "@openzeppelin/contracts/token/ERC20/ERC20.sol"
+        "@openzeppelin/contracts/utils/ReentrancyGuard.sol",
+        "@openzeppelin/contracts/token/ERC20/ERC20.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "./SafeMath.sol"
       ],
       "versionPragmas": [
-        "^0.8.24"
+        "0.8.24"
       ],
       "artifacts": [
-        "CUSDToken"
+        "TBillStaking"
+      ]
+    },
+    "/Users/ayoseun/Documents/GitHub/geth-lite/contracts/contracts/SafeMath.sol": {
+      "lastModificationDate": 1713426564664,
+      "contentHash": "292abce7f9e646a6f84439dde7879253",
+      "sourceName": "contracts/SafeMath.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.8.24"
+      ],
+      "artifacts": [
+        "SafeMath"
+      ]
+    },
+    "/Users/ayoseun/Documents/GitHub/geth-lite/contracts/node_modules/@openzeppelin/contracts/utils/ReentrancyGuard.sol": {
+      "lastModificationDate": 1713182648232,
+      "contentHash": "a92331adac11b453a4de0323fc948119",
+      "sourceName": "@openzeppelin/contracts/utils/ReentrancyGuard.sol",
+      "solcConfig": {
+        "version": "0.8.24",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "evmVersion": "paris",
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.20"
+      ],
+      "artifacts": [
+        "ReentrancyGuard"
       ]
     }
   }
