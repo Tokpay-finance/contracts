@@ -121,13 +121,13 @@ describe("tBillStakingContract Withdrawal Test", () => {
 
   it("should allow users to withdraw from multiple stakes", async function () {
     // Transfer cUSD tokens to user1
-    await cUSDToken.connect(owner).transfer(user1.address, 2000);
+    await cUSDToken.connect(owner).transfer(user1.address, 10);
   
     // Transfer cUSD tokens to the tBillStakingContract contract
-    await cUSDToken.connect(owner).transfer(tBillStakingContract.target, 2000);
+    await cUSDToken.connect(owner).transfer(tBillStakingContract.target, 200);
   
     // Stake tokens for user1 multiple times
-    await cUSDToken.connect(user1).approve(tBillStakingContract.target, 2000);
+    await cUSDToken.connect(user1).approve(tBillStakingContract.target, 1);
     const stakeID= ethers.encodeBytes32String("Firststake")
     const stakeID2= ethers.encodeBytes32String("Secondstake")
     await tBillStakingContract.connect(user1).stake(1450, 10, 1500,stakeID);
@@ -162,6 +162,39 @@ describe("tBillStakingContract Withdrawal Test", () => {
      const latestuser1TBILLBalance = await tBillToken.balanceOf(user1.address);
      expect(latestuser1TBILLBalance).to.equal(0);
   });
+  it("should withdraw all CUSD to owner wallet", async function () {
+    // Transfer cUSD tokens to user1
+    await cUSDToken.connect(owner).transfer(user1.address, 1000);
 
+    // Transfer cUSD tokens to the tBillStakingContract contract
+    await cUSDToken.connect(owner).transfer(tBillStakingContract.target, 2000);
+
+    // Approve CUSD tokens from user1 to stakingContract
+    await cUSDToken.connect(user1).approve(tBillStakingContract.target, 950);
+
+     // Create byte32 of stakeID
+    const stakeID= ethers.encodeBytes32String("Firststake")
+
+     // Stake CUSD from user1 to stakingContract
+    await tBillStakingContract.connect(user1).stake(950, 10, 1000,stakeID);
+
+    // Get the current timestamp
+    const currentTimestamp = (await ethers.provider.getBlock("latest")).timestamp;
+
+    // Increase the timestamp by one week (604800 seconds)
+    const newTimestamp = currentTimestamp + 604800;
+
+    // Set the next block timestamp
+    await ethers.provider.send("evm_setNextBlockTimestamp", [newTimestamp]);
+
+    // Check user1's cUSD balance
+    const tbillcUSDBalance = await cUSDToken.balanceOf(tBillStakingContract.target);
+    expect(tbillcUSDBalance).to.equal(2950);
+
+    await tBillStakingContract.connect(owner).withdrawYield();
+
+    const tbillcUSDBalanceAfter = await cUSDToken.balanceOf(tBillStakingContract.target);
+    expect(tbillcUSDBalanceAfter).to.equal(0);
+  });
 
 });

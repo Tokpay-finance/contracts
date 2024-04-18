@@ -76,4 +76,38 @@ describe("TBillStaking Ownership Test", () => {
     expect(await tBillStaking.serviceFee()).to.equal(50);
   });
 
+
+  it("should allow only owner to withdraw all CUSD", async function () {
+    // Transfer cUSD tokens to user1
+    await cUSDToken.connect(owner).transfer(user1.address, 1000);
+
+    // Transfer cUSD tokens to the tBillStakingContract contract
+    await cUSDToken.connect(owner).transfer(tBillStaking.target, 2000);
+
+    // Approve CUSD tokens from user1 to stakingContract
+    await cUSDToken.connect(user1).approve(tBillStaking.target, 950);
+
+     // Create byte32 of stakeID
+    const stakeID= ethers.encodeBytes32String("Firststake")
+
+     // Stake CUSD from user1 to stakingContract
+    await tBillStaking.connect(user1).stake(950, 10, 1000,stakeID);
+
+    // Get the current timestamp
+    const currentTimestamp = (await ethers.provider.getBlock("latest")).timestamp;
+
+    // Increase the timestamp by one week (604800 seconds)
+    const newTimestamp = currentTimestamp + 604800;
+
+    // Set the next block timestamp
+    await ethers.provider.send("evm_setNextBlockTimestamp", [newTimestamp]);
+
+    // Check user1's cUSD balance
+    const tbillcUSDBalance = await cUSDToken.balanceOf(tBillStaking.target);
+    expect(tbillcUSDBalance).to.equal(2950);
+
+    await expect( tBillStaking.connect(user1).withdrawYield()).to.be.revertedWith("Only the owner can call this function");
+
+  });
+
 });

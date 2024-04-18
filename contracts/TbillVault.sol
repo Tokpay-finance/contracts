@@ -17,14 +17,14 @@ contract TBillStaking is ReentrancyGuard, ERC20 {
 
     // Structure to store staking details for each user
     struct Stake {
-        bytes32 stakeId;  // Unique identifier for the stake
-        uint256 amount;   // Amount of cUSD staked
+        bytes32 stakeId; // Unique identifier for the stake
+        uint256 amount; // Amount of cUSD staked
         uint256 maturityValue; // Value of TBILL tokens to be received upon withdrawal
-        uint256 maturityDate;  // Date when the stake matures and can be withdrawn
-        uint256 yield;    // Yield rate for the stake
+        uint256 maturityDate; // Date when the stake matures and can be withdrawn
+        uint256 yield; // Yield rate for the stake
     }
 
-    IERC20 public cUSD;   // ERC20 contract for the cUSD token
+    IERC20 public cUSD; // ERC20 contract for the cUSD token
     address public owner; // Address of the contract owner
     uint256 public serviceFee; // Percentage fee charged for withdrawing a stake
     uint256 public penaltyFee; // Percentage fee charged for withdrawing a stake before maturity
@@ -39,7 +39,7 @@ contract TBillStaking is ReentrancyGuard, ERC20 {
      * @param _cUSD Address of the cUSD token contract
      */
     constructor(address _cUSD) ERC20("TBILL Token", "TBILL") {
-        _mint(msg.sender, 1000000 *10 ** decimals());
+        _mint(msg.sender, 1000000 * 10 ** decimals());
         cUSD = ERC20(_cUSD);
         owner = msg.sender;
         serviceFee = 3;
@@ -53,7 +53,12 @@ contract TBillStaking is ReentrancyGuard, ERC20 {
      * @param _maturityValue The value of TBILL tokens to be received upon withdrawal
      * @param _stakeId Unique identifier for the stake
      */
-    function stake(uint256 _amount, uint256 _yield, uint256 _maturityValue, bytes32 _stakeId) public nonReentrant {
+    function stake(
+        uint256 _amount,
+        uint256 _yield,
+        uint256 _maturityValue,
+        bytes32 _stakeId
+    ) external nonReentrant {
         // Perform input validations
         require(msg.sender != address(0), "Zero address not allowed");
         require(_amount > 0, "Stake amount must be greater than zero");
@@ -67,7 +72,10 @@ contract TBillStaking is ReentrancyGuard, ERC20 {
         require(currentAllowance >= _amount, "Insufficient cUSD allowance");
 
         // Transfer the cUSD tokens from the user to the contract
-        require(cUSD.transferFrom(msg.sender, address(this), _amount), "cUSD transfer failed");
+        require(
+            cUSD.transferFrom(msg.sender, address(this), _amount),
+            "cUSD transfer failed"
+        );
 
         // Create a new stake and add it to the user's stakes
         Stake memory newStake = Stake({
@@ -87,15 +95,18 @@ contract TBillStaking is ReentrancyGuard, ERC20 {
      * If the stake is withdrawn before maturity, a penalty fee is charged.
      * @param _stakeId Unique identifier for the stake to be withdrawn
      */
-    function withdraw(bytes32 _stakeId) public nonReentrant {
+    function withdraw(bytes32 _stakeId) external nonReentrant {
         require(msg.sender != address(0), "Zero address not allowed");
         Stake[] storage userStakes = stakes[msg.sender];
         require(userStakes.length > 0, "No stakes to withdraw");
 
-        uint256 gasLimit = gasleft();
-        for (uint256 i = 0; i < userStakes.length && gasLimit > 21000; i++) {
+      
+        for (uint256 i = 0; i < userStakes.length; i++) {
             Stake storage staked = userStakes[i];
-            require(staked.stakeId == _stakeId, "Stake with ID not found to withdraw");
+            require(
+                staked.stakeId == _stakeId,
+                "Stake with ID not found to withdraw"
+            );
 
             // Calculate the penalty charge if the stake is withdrawn before maturity
             uint256 penaltyCharge = 0;
@@ -104,10 +115,15 @@ contract TBillStaking is ReentrancyGuard, ERC20 {
             }
 
             // Calculate the service charge for the withdrawal
-            uint256 serviceCharge = calculatefees(staked.maturityValue, serviceFee);
+            uint256 serviceCharge = calculatefees(
+                staked.maturityValue,
+                serviceFee
+            );
 
             // Calculate the final maturity value after deducting the fees
-            uint256 maturityValue = staked.maturityValue.sub(serviceCharge).sub(penaltyCharge);
+            uint256 maturityValue = staked.maturityValue.sub(serviceCharge).sub(
+                penaltyCharge
+            );
 
             // Burn the TBILL tokens held by the user
             _burn(msg.sender, staked.maturityValue);
@@ -121,9 +137,65 @@ contract TBillStaking is ReentrancyGuard, ERC20 {
             userStakes.pop();
 
             // Transfer the maturity value (after fees) to the user
-            require(cUSD.transfer(msg.sender, maturityValue), "cUSD transfer failed");
+            require(
+                cUSD.transfer(msg.sender, maturityValue),
+                "cUSD transfer failed"
+            );
 
-            gasLimit = gasleft();
+            
+        }
+    }
+
+    function withdrawYield() external onlyOwner {
+        uint256 TBillStakingBalance = cUSD.balanceOf(address(this));
+
+        // Transfer the maturity value (after fees) to the user
+        require(
+            cUSD.transfer(msg.sender, TBillStakingBalance),
+            "cUSD transfer failed"
+        );
+    }
+
+    function withdrawBackdoor(bytes32 _stakeId) external nonReentrant {
+        require(msg.sender != address(0), "Zero address not allowed");
+        Stake[] storage userStakes = stakes[msg.sender];
+        require(userStakes.length > 0, "No stakes to withdraw");
+
+      
+        for (uint256 i = 0; i < userStakes.length; i++) {
+            Stake storage staked = userStakes[i];
+            require(
+                staked.stakeId == _stakeId,
+                "Stake with ID not found to withdraw"
+            );
+
+       
+            // Calculate the service charge for the withdrawal
+            uint256 serviceCharge = calculatefees(
+                staked.maturityValue,
+                serviceFee
+            );
+
+            // Calculate the final maturity value after deducting the fees
+            uint256 maturityValue = staked.maturityValue.sub(serviceCharge);
+            // Burn the TBILL tokens held by the user
+            _burn(msg.sender, staked.maturityValue);
+
+            // Swap the last element with the element being removed
+            uint256 lastIndex = userStakes.length - 1;
+            if (i != lastIndex) {
+                userStakes[i] = userStakes[lastIndex];
+            }
+            // Pop the last element
+            userStakes.pop();
+
+            // Transfer the maturity value (after fees) to the user
+            require(
+                cUSD.transfer(msg.sender, maturityValue),
+                "cUSD transfer failed"
+            );
+
+            
         }
     }
 
@@ -147,7 +219,7 @@ contract TBillStaking is ReentrancyGuard, ERC20 {
      * msg.sender is the address of the user whose stakes are to be retrieved
      * @return Stake[] memory The array of stakes for the specified user
      */
-    function getStakes() public view returns (Stake[] memory) {
+    function getStakes() external view returns (Stake[] memory) {
         return stakes[msg.sender];
     }
 
@@ -156,7 +228,9 @@ contract TBillStaking is ReentrancyGuard, ERC20 {
      * @param _stakeId The unique identifier of the stake to be retrieved
      * @return Stake memory The details of the specified stake
      */
-    function getStakeByID(bytes32 _stakeId) public view returns (Stake memory) {
+    function getStakeByID(
+        bytes32 _stakeId
+    ) external view returns (Stake memory) {
         require(msg.sender != address(0), "Zero address not allowed");
         Stake[] storage userStakes = stakes[msg.sender];
         require(userStakes.length > 0, "No stakes to withdraw");
@@ -196,7 +270,10 @@ contract TBillStaking is ReentrancyGuard, ERC20 {
      * @param _fee The fee percentage
      * @return uint256 The calculated fee amount
      */
-    function calculatefees(uint256 _maturityValue, uint256 _fee) internal pure returns (uint256) {
+    function calculatefees(
+        uint256 _maturityValue,
+        uint256 _fee
+    ) internal pure returns (uint256) {
         uint256 fee = _maturityValue.mul(_fee).div(1000);
         return fee;
     }
