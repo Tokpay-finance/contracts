@@ -19,7 +19,7 @@ describe("TBillStaking Deployment Test", () => {
     // Inherit the TBIllToken from Deployed TBillStaking contract
     tBillToken = tBillStaking;
   });
-
+// 
   it("should allow the owner to transfer ownership", async function () {
     // Transfer ownership to user2
     await tBillStaking.connect(owner).transferOwnership(user2.address);

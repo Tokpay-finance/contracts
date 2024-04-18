@@ -50,7 +50,7 @@ describe("TBillStaking Staking Test", () => {
     await tBillStaking.connect(user1).stake(950, 10, 1000, stakeID);
 
     // Check user1's stakes
-    const user1Stakes = await tBillStaking.getStakes(user1.address);
+    const user1Stakes = await tBillStaking.connect(user1).getStakes();
 
     expect(user1Stakes.length).to.equal(1);
     expect(user1Stakes[0].amount).to.equal(950);
@@ -156,7 +156,7 @@ describe("TBillStaking Staking Test", () => {
     await tBillStaking.connect(user1).stake(500, 5, 1500, stakeID2);
 
     // Check user1's stakes
-    const user1Stakes = await tBillStaking.getStakes(user1.address);
+    const user1Stakes = await tBillStaking.connect(user1).getStakes();
     expect(user1Stakes.length).to.equal(2);
     expect(user1Stakes[0].amount).to.equal(950);
     expect(user1Stakes[0].maturityValue).to.equal(1000);

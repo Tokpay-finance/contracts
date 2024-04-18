@@ -144,11 +144,11 @@ contract TBillStaking is ReentrancyGuard, ERC20 {
 
     /**
      * @dev Function to retrieve the stakes for a given user.
-     * @param _user The address of the user whose stakes are to be retrieved
+     * msg.sender is the address of the user whose stakes are to be retrieved
      * @return Stake[] memory The array of stakes for the specified user
      */
-    function getStakes(address _user) public view returns (Stake[] memory) {
-        return stakes[_user];
+    function getStakes() public view returns (Stake[] memory) {
+        return stakes[msg.sender];
     }
 
     /**
