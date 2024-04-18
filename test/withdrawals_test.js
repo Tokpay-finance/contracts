@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
-require("@atixlabs/hardhat-time-n-mine")
+
 
 describe("tBillStakingContract Withdrawal Test", () => {
   let tBillStakingContract, tBillToken, cUSDToken, owner, user1, user2;
@@ -15,10 +15,10 @@ describe("tBillStakingContract Withdrawal Test", () => {
 
     // Deploy TBillStaking contract
     const TBillStaking = await ethers.getContractFactory("TBillStaking");
-    tBillStaking = await TBillStaking.deploy(cUSDToken.target);
+    tBillStakingContract = await TBillStaking.deploy(cUSDToken.target);
 
     // Inherit the TBIllToken from Deployed TBillStaking contract
-    tBillToken = tBillStaking;
+    tBillToken = tBillStakingContract;
   });
 
 

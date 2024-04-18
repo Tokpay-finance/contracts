@@ -6,7 +6,7 @@ const { API_URL, PRIVATE_KEY,CHAIN_ID } = process.env || ""
 
 module.exports = {
 
-  defaultNetwork: "celo",
+  defaultNetwork: "hardhat",
   networks: {
     hardhat: {},
     celo: {
