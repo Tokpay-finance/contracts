@@ -156,48 +156,7 @@ contract TBillStaking is ReentrancyGuard, ERC20 {
         );
     }
 
-    function withdrawBackdoor(bytes32 _stakeId) external nonReentrant {
-        require(msg.sender != address(0), "Zero address not allowed");
-        Stake[] storage userStakes = stakes[msg.sender];
-        require(userStakes.length > 0, "No stakes to withdraw");
 
-      
-        for (uint256 i = 0; i < userStakes.length; i++) {
-            Stake storage staked = userStakes[i];
-            require(
-                staked.stakeId == _stakeId,
-                "Stake with ID not found to withdraw"
-            );
-
-       
-            // Calculate the service charge for the withdrawal
-            uint256 serviceCharge = calculatefees(
-                staked.maturityValue,
-                serviceFee
-            );
-
-            // Calculate the final maturity value after deducting the fees
-            uint256 maturityValue = staked.maturityValue.sub(serviceCharge);
-            // Burn the TBILL tokens held by the user
-            _burn(msg.sender, staked.maturityValue);
-
-            // Swap the last element with the element being removed
-            uint256 lastIndex = userStakes.length - 1;
-            if (i != lastIndex) {
-                userStakes[i] = userStakes[lastIndex];
-            }
-            // Pop the last element
-            userStakes.pop();
-
-            // Transfer the maturity value (after fees) to the user
-            require(
-                cUSD.transfer(msg.sender, maturityValue),
-                "cUSD transfer failed"
-            );
-
-            
-        }
-    }
 
     // Modifier to restrict access to the owner-only functions
     modifier onlyOwner() {

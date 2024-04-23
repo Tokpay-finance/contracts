@@ -265,8 +265,8 @@
       ]
     },
     "/Users/ayoseun/Documents/GitHub/geth-lite/contracts/contracts/TbillVault.sol": {
-      "lastModificationDate": 1713443448621,
-      "contentHash": "e8886ae5f23b81ca18d8e2d86019e426",
+      "lastModificationDate": 1713856329289,
+      "contentHash": "6b29abc37b704494ed08294e8fb84732",
       "sourceName": "contracts/TbillVault.sol",
       "solcConfig": {
         "version": "0.8.24",
