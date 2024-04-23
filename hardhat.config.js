@@ -2,7 +2,7 @@ require("@nomicfoundation/hardhat-toolbox");
 require("dotenv").config();
 require("@nomicfoundation/hardhat-ignition-ethers");
 
-const { API_URL, PRIVATE_KEY,CHAIN_ID } = process.env || ""
+const { TESTNET_API_URL,MAINNET_API_URL, PRIVATE_KEY,CHAIN_ID } = process.env || ""
 
 module.exports = {
 
@@ -10,9 +10,13 @@ module.exports = {
   networks: {
     hardhat: {},
     celo: {
-      url: API_URL,
+      url:MAINNET_API_URL,
       accounts: [PRIVATE_KEY],
     },
+    alfajores:{
+      url: TESTNET_API_URL,
+      accounts: [PRIVATE_KEY],
+    }
   },
   // etherscan: {
   //   apiKey: ETHERSCAN_API_KEY,

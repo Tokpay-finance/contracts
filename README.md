@@ -49,7 +49,7 @@ Make sure you have the Hardhat node running (npx hardhat node) if deploying to t
 To verify run this command
 
 ```shell
-npx hardhat verify --network celo  0x7808B151F869F7Ab6f9653742A199F22c185b980
+npx hardhat verify --network celo  <Deployed contract address>
 ```
 
 this comand takes the nertwork, contract address and the time of deployment.
