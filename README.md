@@ -39,7 +39,12 @@ npx hardhat test
 ```
 
 ## Deployment
-To deploy the Answerly token contract:
+To deploy the to testnet contract:
+
+```bash
+npx hardhat run scripts/deploy.js --network alfajores
+```
+For mainnet
 
 ```bash
 npx hardhat run scripts/deploy.js --network celo
