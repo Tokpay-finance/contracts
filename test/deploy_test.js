@@ -59,7 +59,7 @@ describe("TBillStaking Deployment Test", () => {
 
     // Attempt to stake zero amount
     await expect(
-      tBillStaking.connect(fakeSigner).stake(950, 10, 1000, stakeID)
+      tBillStaking.connect(fakeSigner).stake(950, 10, 1000, stakeID,7)
     ).to.be.revertedWith("Zero address not allowed");
   });
 });

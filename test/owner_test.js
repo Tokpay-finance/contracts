@@ -40,7 +40,7 @@ describe("TBillStaking Ownership Test", () => {
     await cUSDToken.connect(user1).approve(tBillStaking.target, 950);
     const stakeID= ethers.encodeBytes32String("Firststake")
     // Stake tokens for user1
-    await tBillStaking.connect(user1).stake(950, 10, 1000,stakeID);
+    await tBillStaking.connect(user1).stake(950, 10, 1000,stakeID,7);
     
   
     // Get the current timestamp
@@ -91,7 +91,7 @@ describe("TBillStaking Ownership Test", () => {
     const stakeID= ethers.encodeBytes32String("Firststake")
 
      // Stake CUSD from user1 to stakingContract
-    await tBillStaking.connect(user1).stake(950, 10, 1000,stakeID);
+    await tBillStaking.connect(user1).stake(950, 10, 1000,stakeID,7);
 
     // Get the current timestamp
     const currentTimestamp = (await ethers.provider.getBlock("latest")).timestamp;

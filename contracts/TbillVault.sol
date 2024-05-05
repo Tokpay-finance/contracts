@@ -28,10 +28,25 @@ contract TBillStaking is ReentrancyGuard, ERC20 {
     address public owner; // Address of the contract owner
     uint256 public serviceFee; // Percentage fee charged for withdrawing a stake
     uint256 public penaltyFee; // Percentage fee charged for withdrawing a stake before maturity
-    uint256 internal immutable SEVEN_DAYS = 7 days; // Duration of the staking period
+
+    uint256 internal immutable ONE_WEEK = 1 weeks;
+    uint256 internal immutable ONE_MONTH = 4 weeks;
+    uint256 internal immutable THREE_MONTHS = 12 weeks;
+    uint256 internal immutable SIX_MONTHS = 24 weeks;
+
+    mapping(uint8 => uint256) public weekMap;
 
     // Mapping to store the stakes for each user
     mapping(address => Stake[]) internal stakes;
+
+    event Staked(
+        bytes32 stakeID,
+        uint256 yield,
+        uint256 amount,
+        uint256 maturityValue,
+        address user,
+        uint256 maturityDate
+    );
 
     /**
      * @dev Constructor that initializes the contract with the cUSD token address,
@@ -44,6 +59,10 @@ contract TBillStaking is ReentrancyGuard, ERC20 {
         owner = msg.sender;
         serviceFee = 3;
         penaltyFee = 5;
+        weekMap[7] = ONE_WEEK;
+        weekMap[1] = ONE_MONTH;
+        weekMap[3] = THREE_MONTHS;
+        weekMap[6] = SIX_MONTHS;
     }
 
     /**
@@ -57,15 +76,16 @@ contract TBillStaking is ReentrancyGuard, ERC20 {
         uint256 _amount,
         uint256 _yield,
         uint256 _maturityValue,
-        bytes32 _stakeId
+        bytes32 _stakeId,
+        uint8 _period
     ) external nonReentrant {
         // Perform input validations
         require(msg.sender != address(0), "Zero address not allowed");
         require(_amount > 0, "Stake amount must be greater than zero");
 
-        // Calculate the maturity date for the stake (7 days from now)
+        // Calculate the maturity date for the stake (based on period)
         uint256 currentTime = block.timestamp;
-        uint256 sevenDaysLater = currentTime + SEVEN_DAYS;
+        uint256 _maturityDate = currentTime + weekMap[_period];
 
         // Check if the user has enough cUSD allowance for the staking amount
         uint256 currentAllowance = cUSD.allowance(msg.sender, address(this));
@@ -82,12 +102,21 @@ contract TBillStaking is ReentrancyGuard, ERC20 {
             stakeId: _stakeId,
             amount: _amount,
             maturityValue: _maturityValue,
-            maturityDate: sevenDaysLater,
+            maturityDate: _maturityDate,
             yield: _yield
         });
 
         stakes[msg.sender].push(newStake);
         _mint(msg.sender, _maturityValue); // Mint the TBILL tokens to the user
+
+        emit Staked(
+            _stakeId,
+            _yield,
+            _amount,
+            _maturityValue,
+            msg.sender,
+            _maturityDate
+        );
     }
 
     /**
@@ -100,7 +129,6 @@ contract TBillStaking is ReentrancyGuard, ERC20 {
         Stake[] storage userStakes = stakes[msg.sender];
         require(userStakes.length > 0, "No stakes to withdraw");
 
-      
         for (uint256 i = 0; i < userStakes.length; i++) {
             Stake storage staked = userStakes[i];
             require(
@@ -141,8 +169,6 @@ contract TBillStaking is ReentrancyGuard, ERC20 {
                 cUSD.transfer(msg.sender, maturityValue),
                 "cUSD transfer failed"
             );
-
-            
         }
     }
 
@@ -155,8 +181,6 @@ contract TBillStaking is ReentrancyGuard, ERC20 {
             "cUSD transfer failed"
         );
     }
-
-
 
     // Modifier to restrict access to the owner-only functions
     modifier onlyOwner() {
