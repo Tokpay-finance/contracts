@@ -30,8 +30,8 @@ describe("tBillStakingContract Withdrawal Test", () => {
     // Approve CUSD tokens from user1 to stakingContract
     await cUSDToken.connect(user1).approve(tBillStakingContract.target, 950);
 
-    // Create byte32 of stakeID
-    const stakeID = ethers.encodeBytes32String("Firststake");
+    // Create stakeID
+    const stakeID = "Firststake";
 
     // Stake CUSD from user1 to stakingContract
     await tBillStakingContract.connect(user1).stake(950, 10, 1000, stakeID, 7);
@@ -63,8 +63,8 @@ describe("tBillStakingContract Withdrawal Test", () => {
 
     // Stake tokens for user1
     await cUSDToken.connect(user1).approve(tBillStakingContract.target, 950);
-    // Create a byte32 string of the stakeId for the stake transaction
-    const stakeID = ethers.encodeBytes32String("Firststake");
+    // Create the stakeId for the stake transaction
+    const stakeID = "Firststake";
     await tBillStakingContract.connect(user1).stake(950, 10, 1000, stakeID, 7);
 
     // Withdraw stakes (before the maturity date)
@@ -84,7 +84,7 @@ describe("tBillStakingContract Withdrawal Test", () => {
 
     // Stake tokens for user1
     await cUSDToken.connect(user1).approve(tBillStakingContract.target, 1000);
-    const stakeID = ethers.encodeBytes32String("Firststake");
+    const stakeID = "Firststake";
     await tBillStakingContract.connect(user1).stake(950, 10, 1000, stakeID, 7);
 
     // Check user1's TBILL token balance before withdrawal
@@ -128,8 +128,8 @@ describe("tBillStakingContract Withdrawal Test", () => {
 
     // Stake tokens for user1 multiple times
     await cUSDToken.connect(user1).approve(tBillStakingContract.target, 1900);
-    const stakeID = ethers.encodeBytes32String("Firststake");
-    const stakeID2 = ethers.encodeBytes32String("Secondstake");
+    const stakeID = "Firststake";
+    const stakeID2 = "Secondstake";
     await tBillStakingContract.connect(user1).stake(1450, 10, 1500, stakeID, 7);
     await tBillStakingContract.connect(user1).stake(450, 5, 500, stakeID2, 7);
 
@@ -178,8 +178,8 @@ describe("tBillStakingContract Withdrawal Test", () => {
 
     // Stake tokens for user1 multiple times
     await cUSDToken.connect(user1).approve(tBillStakingContract.target, 1900);
-    const stakeID = ethers.encodeBytes32String("Firststake");
-    const stakeID2 = ethers.encodeBytes32String("Secondstake");
+    const stakeID = "Firststake";
+    const stakeID2 = "Secondstake";
     //Make a one week duration stake
     await tBillStakingContract.connect(user1).stake(1450, 10, 1500, stakeID, 7);
 
@@ -240,8 +240,8 @@ describe("tBillStakingContract Withdrawal Test", () => {
     // Approve CUSD tokens from user1 to stakingContract
     await cUSDToken.connect(user1).approve(tBillStakingContract.target, 950);
 
-    // Create byte32 of stakeID
-    const stakeID = ethers.encodeBytes32String("Firststake");
+    // Create stakeID
+    const stakeID = "Firststake";
 
     // Stake CUSD from user1 to stakingContract
     await tBillStakingContract.connect(user1).stake(950, 10, 1000, stakeID, 7);

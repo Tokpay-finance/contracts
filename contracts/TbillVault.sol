@@ -17,7 +17,7 @@ contract TBillStaking is ReentrancyGuard, ERC20 {
 
     // Structure to store staking details for each user
     struct Stake {
-        bytes32 stakeId; // Unique identifier for the stake
+        string stakeId; // Unique identifier for the stake
         uint256 amount; // Amount of cUSD staked
         uint256 maturityValue; // Value of TBILL tokens to be received upon withdrawal
         uint256 maturityDate; // Date when the stake matures and can be withdrawn
@@ -40,7 +40,7 @@ contract TBillStaking is ReentrancyGuard, ERC20 {
     mapping(address => Stake[]) internal stakes;
 
     event Staked(
-        bytes32 stakeID,
+        string stakeID,
         uint256 yield,
         uint256 amount,
         uint256 maturityValue,
@@ -76,7 +76,7 @@ contract TBillStaking is ReentrancyGuard, ERC20 {
         uint256 _amount,
         uint256 _yield,
         uint256 _maturityValue,
-        bytes32 _stakeId,
+        string memory _stakeId,
         uint8 _period
     ) external nonReentrant {
         // Perform input validations
@@ -124,7 +124,7 @@ contract TBillStaking is ReentrancyGuard, ERC20 {
      * If the stake is withdrawn before maturity, a penalty fee is charged.
      * @param _stakeId Unique identifier for the stake to be withdrawn
      */
-    function withdraw(bytes32 _stakeId) external nonReentrant {
+    function withdraw(string memory _stakeId) external nonReentrant {
         require(msg.sender != address(0), "Zero address not allowed");
         Stake[] storage userStakes = stakes[msg.sender];
         require(userStakes.length > 0, "No stakes to withdraw");
@@ -132,7 +132,9 @@ contract TBillStaking is ReentrancyGuard, ERC20 {
         for (uint256 i = 0; i < userStakes.length; i++) {
             Stake storage staked = userStakes[i];
             require(
-                staked.stakeId == _stakeId,
+                keccak256(abi.encodePacked(staked.stakeId)) == keccak256(abi.encodePacked(_stakeId))
+                   ,
+                
                 "Stake with ID not found to withdraw"
             );
 
@@ -212,8 +214,8 @@ contract TBillStaking is ReentrancyGuard, ERC20 {
      * @return Stake memory The details of the specified stake
      */
     function getStakeByID(
-        bytes32 _stakeId
-    ) external view returns (Stake memory) {
+        string memory _stakeId
+    ) external view returns (string memory) {
         require(msg.sender != address(0), "Zero address not allowed");
         Stake[] storage userStakes = stakes[msg.sender];
         require(userStakes.length > 0, "No stakes to withdraw");
@@ -221,8 +223,8 @@ contract TBillStaking is ReentrancyGuard, ERC20 {
         uint256 gasLimit = gasleft();
         for (uint256 i = 0; i < userStakes.length && gasLimit > 21000; i++) {
             Stake storage staked = userStakes[i];
-            if (staked.stakeId == _stakeId) {
-                return staked;
+            if (keccak256(abi.encodePacked(staked.stakeId)) == keccak256(abi.encodePacked(_stakeId))) {
+                return staked.stakeId;
             }
             gasLimit = gasleft();
         }

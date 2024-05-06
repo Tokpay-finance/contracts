@@ -26,8 +26,8 @@ describe("TBillStaking Staking Test", () => {
     // Approve cUSD tokens for user1 to be used by the TBillStaking contract
     await cUSDToken.connect(user1).approve(tBillStaking.target, 950);
 
-    // Create a byte32 string of the stakeId for the stake transaction
-    const stakeID = ethers.encodeBytes32String("Firststake");
+    // Create  the stakeId for the stake transaction
+    const stakeID = "Firststake";
 
     // Revert as failed for a zero amount
     await expect(
@@ -42,8 +42,8 @@ describe("TBillStaking Staking Test", () => {
     // Approve cUSD tokens for user1 to be used by the TBillStaking contract
     await cUSDToken.connect(user1).approve(tBillStaking.target, 950);
 
-    // Create a byte32 string of the stakeId for the stake transaction
-    const stakeID = ethers.encodeBytes32String("Firststake");
+    // Create the stakeId for the stake transaction
+    const stakeID = "Firststake";
 
     // Stake tokens for user1
     await tBillStaking.connect(user1).stake(950, 10, 1000, stakeID, 7);
@@ -57,6 +57,26 @@ describe("TBillStaking Staking Test", () => {
     expect(user1Stakes[0].yield).to.equal(10);
   });
 
+
+  it("should allow users to get stake by stake id", async function () {
+    // Transfer cUSD tokens to user1
+    await cUSDToken.connect(owner).transfer(user1.address, 1000);
+
+    // Approve cUSD tokens for user1 to be used by the TBillStaking contract
+    await cUSDToken.connect(user1).approve(tBillStaking.target, 950);
+
+    // Create a byte32 string of the stakeId for the stake transaction
+    const stakeID = "Firststake";
+
+    // Stake tokens for user1
+    await tBillStaking.connect(user1).stake(950, 10, 1000, stakeID, 7);
+
+    // Check user1's stakes
+    const user1Stakes = await tBillStaking.connect(user1).getStakeByID(stakeID);
+    expect(user1Stakes).to.equal(stakeID);
+ 
+  });
+
   it("should reduce CUSD balance of user after staking", async function () {
     // Transfer cUSD tokens to user1
     await cUSDToken.connect(owner).transfer(user1.address, 1000);
@@ -67,8 +87,8 @@ describe("TBillStaking Staking Test", () => {
     // Approve Stake tokens for user1
     await cUSDToken.connect(user1).approve(tBillStaking.target, 950);
 
-    // Create a byte32 string of the stakeId for the stake transaction
-    const stakeID = ethers.encodeBytes32String("Firststake");
+    // Create the stakeId for the stake transaction
+    const stakeID = "Firststake";
 
     // Stake tokens for user1
     await tBillStaking.connect(user1).stake(950, 10, 1000, stakeID, 7);
@@ -92,8 +112,8 @@ describe("TBillStaking Staking Test", () => {
     // Approve Stake tokens for user1
     await cUSDToken.connect(user1).approve(tBillStaking.target, 950);
 
-    // Create a byte32 string of the stakeId for the stake transaction
-    const stakeID = ethers.encodeBytes32String("Firststake");
+    // Create the stakeId for the stake transaction
+    const stakeID = "Firststake";
 
     // Stake tokens for user1
     await tBillStaking.connect(user1).stake(950, 10, 1000, stakeID, 7);
@@ -119,8 +139,8 @@ describe("TBillStaking Staking Test", () => {
     // Approve Stake tokens for user1
     await cUSDToken.connect(user1).approve(tBillStaking.target, 950);
 
-    // Create a byte32 string of the stakeId for the stake transaction
-    const stakeID = ethers.encodeBytes32String("Firststake");
+    // Create the stakeId for the stake transaction
+    const stakeID = "Firststake";
 
     // Stake tokens for user1
     await tBillStaking.connect(user1).stake(950, 10, 1000, stakeID, 7);
@@ -139,8 +159,8 @@ describe("TBillStaking Staking Test", () => {
     // Approve Stake tokens for user1
     await cUSDToken.connect(user1).approve(tBillStaking.target, 950);
 
-    // Create a byte32 string of the stakeId for the stake transaction
-    const stakeID = ethers.encodeBytes32String("Firststake");
+    // Create the stakeId for the stake transaction
+    const stakeID = "Firststake";
 
     // Stake tokens for user1
     await tBillStaking.connect(user1).stake(950, 10, 1000, stakeID, 7);
@@ -148,8 +168,8 @@ describe("TBillStaking Staking Test", () => {
     // Approve another tokens for user1
     await cUSDToken.connect(user1).approve(tBillStaking.target, 500);
 
-    // Create a byte32 string of the stakeId for another stake transaction
-    const stakeID2 = ethers.encodeBytes32String("Secondstake");
+    // Create the stakeId for another stake transaction
+    const stakeID2 = "Secondstake";
 
     // Stake another tokens for user1
     await tBillStaking.connect(user1).stake(500, 5, 1500, stakeID2, 7);
@@ -176,8 +196,8 @@ describe("TBillStaking Staking Test", () => {
     // Approve Stake tokens for user1
     await cUSDToken.connect(user1).approve(tBillStaking.target, 950);
 
-    // Create a byte32 string of the stakeId for the stake transaction
-    const stakeID = ethers.encodeBytes32String("Firststake");
+    // Create the stakeId for the stake transaction
+    const stakeID = "Firststake";
 
     // Stake tokens for user1
     await tBillStaking.connect(user1).stake(950, 10, 1000, stakeID, 7);
@@ -185,8 +205,8 @@ describe("TBillStaking Staking Test", () => {
     // Approve another tokens for user1
     await cUSDToken.connect(user1).approve(tBillStaking.target, 500);
 
-    // Create a byte32 string of the stakeId for another stake transaction
-    const stakeID2 = ethers.encodeBytes32String("Secondstake");
+    // Create the stakeId for another stake transaction
+    const stakeID2 = "Secondstake";
 
     // Stake another tokens for user1
     await tBillStaking.connect(user1).stake(500, 5, 1500, stakeID2, 6);
@@ -212,26 +232,26 @@ describe("TBillStaking Staking Test", () => {
     // Approve Stake tokens for user1
     await cUSDToken.connect(user1).approve(tBillStaking.target, 1000);
 
-    // Create a byte32 string of the stakeId for the one week stake transaction
-    const stakeID = ethers.encodeBytes32String("Firststake");
+    // Create the stakeId for the one week stake transaction
+    const stakeID = "Firststake";
 
     // Stake tokens for user1
     await tBillStaking.connect(user1).stake(150, 10, 200, stakeID, 7);
 
-    // Create a byte32 string of the one month stakeId for another stake transaction
-    const stakeID2 = ethers.encodeBytes32String("Secondstake");
+    // Create the one month stakeId for another stake transaction
+    const stakeID2 = "Secondstake";
 
     // Stake another tokens for user1
     await tBillStaking.connect(user1).stake(450, 5, 500, stakeID2, 1);
 
-    // Create a byte32 string of the three months stakeId for another stake transaction
-    const stakeID3 = ethers.encodeBytes32String("Thirdstake");
+    // Create the three months stakeId for another stake transaction
+    const stakeID3 = "Thirdstake";
 
     // Stake another tokens for user1
     await tBillStaking.connect(user1).stake(150, 5, 200, stakeID3, 3);
 
-    // Create a byte32 string of the six months stakeId for another stake transaction
-    const stakeID4 = ethers.encodeBytes32String("Fourthstake");
+    // Create the six months stakeId for another stake transaction
+    const stakeID4 = "Fourthstake";
 
     // Stake another tokens for user1
     await tBillStaking.connect(user1).stake(250, 5, 300, stakeID4, 6);
@@ -264,8 +284,8 @@ describe("TBillStaking Staking Test", () => {
     // Approve Stake tokens for user1
     await cUSDToken.connect(user1).approve(tBillStaking.target, 1000);
 
-    // Create a byte32 string of the stakeId for the one week stake transaction
-    const stakeID = ethers.encodeBytes32String("Firststake");
+    // Create the stakeId for the one week stake transaction
+    const stakeID = "Firststake";
     // Get the current timestamp
     const currentTimestamp = (await ethers.provider.getBlock("latest"))
       .timestamp;
@@ -284,8 +304,8 @@ describe("TBillStaking Staking Test", () => {
     // Approve Stake tokens for user1
     await cUSDToken.connect(user1).approve(tBillStaking.target, 1000);
 
-    // Create a byte32 string of the stakeId for the one week stake transaction
-    const stakeID = ethers.encodeBytes32String("Firststake");
+    // Create the stakeId for the one week stake transaction
+    const stakeID = "Firststake";
     // Get the current timestamp
     const currentTimestamp = (await ethers.provider.getBlock("latest"))
       .timestamp;
@@ -305,8 +325,8 @@ describe("TBillStaking Staking Test", () => {
     // Approve Stake tokens for user1
     await cUSDToken.connect(user1).approve(tBillStaking.target, 1000);
 
-    // Create a byte32 string of the stakeId for the one week stake transaction
-    const stakeID = ethers.encodeBytes32String("Firststake");
+    // Create the stakeId for the one week stake transaction
+    const stakeID = "Firststake";
     // Get the current timestamp
     const currentTimestamp = (await ethers.provider.getBlock("latest"))
       .timestamp;
@@ -326,8 +346,8 @@ describe("TBillStaking Staking Test", () => {
     // Approve Stake tokens for user1
     await cUSDToken.connect(user1).approve(tBillStaking.target, 1000);
 
-    // Create a byte32 string of the stakeId for the one week stake transaction
-    const stakeID = ethers.encodeBytes32String("Firststake");
+    // Create the stakeId for the one week stake transaction
+    const stakeID = "Firststake";
     // Get the current timestamp
     const currentTimestamp = (await ethers.provider.getBlock("latest"))
       .timestamp;

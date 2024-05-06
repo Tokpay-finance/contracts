@@ -38,7 +38,7 @@ describe("TBillStaking Ownership Test", () => {
   
     // Stake tokens for user1
     await cUSDToken.connect(user1).approve(tBillStaking.target, 950);
-    const stakeID= ethers.encodeBytes32String("Firststake")
+    const stakeID= "Firststake"
     // Stake tokens for user1
     await tBillStaking.connect(user1).stake(950, 10, 1000,stakeID,7);
     
@@ -88,7 +88,7 @@ describe("TBillStaking Ownership Test", () => {
     await cUSDToken.connect(user1).approve(tBillStaking.target, 950);
 
      // Create byte32 of stakeID
-    const stakeID= ethers.encodeBytes32String("Firststake")
+    const stakeID= "Firststake"
 
      // Stake CUSD from user1 to stakingContract
     await tBillStaking.connect(user1).stake(950, 10, 1000,stakeID,7);

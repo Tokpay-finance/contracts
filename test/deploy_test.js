@@ -55,7 +55,7 @@ describe("TBillStaking Deployment Test", () => {
     });
 
     // create a byte32 stakeId
-    const stakeID = ethers.encodeBytes32String("Firststake");
+    const stakeID = "Firststake";
 
     // Attempt to stake zero amount
     await expect(
